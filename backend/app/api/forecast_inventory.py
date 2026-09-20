@@ -12,20 +12,7 @@ from app.api.datasets import load_cleaned_df
 from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.inventory.optimization import InventoryPolicy, compute_inventory, inventory_health_score
-from app.ml.explainability import (
-    business_friendly_explanation,
-    compute_shap_values,
-    global_feature_importance,
-    local_explanation,
-)
 from app.ml.features import build_feature_set
-from app.ml.forecasting import (
-    BASELINES,
-    compute_metrics,
-    predict_with_uncertainty,
-    time_based_split,
-    train_lightgbm,
-)
 from app.models.orm import AuditLog, InventoryRecommendation, ModelVersion, User
 
 router = APIRouter(prefix="/api", tags=["forecast_inventory"])
@@ -86,6 +73,8 @@ async def train_model(
     dataset_id: int, horizon: int = 14,
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
+    from app.ml.forecasting import BASELINES, compute_metrics, time_based_split, train_lightgbm
+
     df, schema = load_cleaned_df(db, dataset_id)
     date_col, store_col, item_col, sales_col = (
         schema["date_col"], schema["store_col"], schema["item_col"], schema["sales_col"],
@@ -169,6 +158,9 @@ async def get_forecast(
     dataset_id: int, store_id: int, item_id: int,
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
+    from app.ml.explainability import business_friendly_explanation, compute_shap_values, local_explanation
+    from app.ml.forecasting import predict_with_uncertainty
+
     model_version = _latest_model_version(db, dataset_id)
     model = joblib.load(model_version.model_artifact_path)
     feature_cols = model_version.feature_cols_json
@@ -211,6 +203,8 @@ def _dataset_schema(db: Session, dataset_id: int) -> dict:
 
 @router.get("/models/{dataset_id}/feature-importance")
 async def feature_importance(dataset_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    from app.ml.explainability import compute_shap_values, global_feature_importance
+
     model_version = _latest_model_version(db, dataset_id)
     model = joblib.load(model_version.model_artifact_path)
     feature_cols = model_version.feature_cols_json

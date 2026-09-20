@@ -49,9 +49,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex app-shell">
       <aside className="w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col">
-        <div className="text-lg font-bold text-brand-700 dark:text-brand-500 mb-1">Retail Intelligence</div>
+        <div className="text-lg font-bold text-brand-700 dark:text-brand-500 mb-1"><span className="brand-mark">RI</span> Retail Intelligence</div>
         <div className="text-xs text-slate-400 mb-6">Explainable ML Decision Platform</div>
         <nav className="flex-1 space-y-1">
           {NAV.map((n) => (

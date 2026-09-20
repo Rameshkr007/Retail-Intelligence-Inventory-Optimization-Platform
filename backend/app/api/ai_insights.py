@@ -23,7 +23,6 @@ from app.api.forecast_inventory import _dataset_schema, _get_features, _sanitize
 from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.inventory.optimization import InventoryPolicy, abc_analysis, compute_inventory
-from app.ml.explainability import business_friendly_explanation, compute_shap_values, local_explanation
 from app.ml.features import demand_behavior_profile
 from app.models.orm import ModelVersion, User
 
@@ -117,6 +116,8 @@ async def ask_ai_insights(dataset_id: int, question: str, db: Session = Depends(
                                             "trend_label", "demand_pattern"]].round(2).to_dict(orient="records")})
 
     if intent == "explain_forecast":
+        from app.ml.explainability import business_friendly_explanation, compute_shap_values, local_explanation
+
         store_match, item_match = _STORE_RE.search(question), _ITEM_RE.search(question)
         if not (store_match and item_match):
             return _sanitize({
