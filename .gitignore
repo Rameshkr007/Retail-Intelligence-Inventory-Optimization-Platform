@@ -1,0 +1,27 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+build/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+
+# ML artifacts
+ml/artifacts/*.joblib
+
+# Processed data
+data/processed/*.parquet
+
+# VS Code
+.vscode/
